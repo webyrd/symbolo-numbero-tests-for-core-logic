@@ -312,7 +312,7 @@
              (symbolo y)))
          ;; Simplified answer should just be:
          ;;
-         ;; (_0)         
+         ;; (_0)
          '((_0 :- (!= (_0 (_1 _2)))))))
 
     (is (=
@@ -323,7 +323,7 @@
              (!= (list x y) q)))
          ;; Simplified answer should just be:
          ;;
-         ;; (_0)         
+         ;; (_0)
          '((_0 :- (!= (_0 (_1 _2)))))))
     
     ))
