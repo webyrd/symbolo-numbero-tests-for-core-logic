@@ -8,7 +8,7 @@
 ;; https://gist.github.com/swannodette/8876121
 
 (declare numbero*)
- 
+
 (defn symbolo* [x]
   (reify
     IConstraintStep
@@ -24,20 +24,21 @@
           (not (lvar? (walk s x))))))
     IVerifyConstraint
     (-verify [_ a cs]
-      (not (some (fn [c] (= (-rator c) `symbolo))
+      (not (some (fn [c] (= (-rator c) `numbero))
                  (map (:cm cs) (get (:km cs) (root-var a x))))))
     IConstraintOp
     (-rator [_] `symbolo)
     (-rands [_] [x])
     IReifiableConstraint
     (-reifyc [c v r s]
-      `(symbolo ~(-reify s x r)))
+      (when-not (lvar? (walk r x))
+        `(symbolo ~(-reify s x r))))
     IConstraintWatchedStores
     (-watched-stores [this] #{:clojure.core.logic/subst})))
- 
+
 (defn symbolo [x]
   (cgoal (symbolo* x)))
- 
+
 (defn numbero* [x]
   (reify
     IConstraintStep
@@ -53,16 +54,17 @@
           (not (lvar? (walk s x))))))
     IVerifyConstraint
     (-verify [_ a cs]
-      (not (some (fn [c] (= (-rator c) `numbero))
+      (not (some (fn [c] (= (-rator c) `symbolo))
                  (map (:cm cs) (get (:km cs) (root-var a x))))))
     IConstraintOp
-    (-rator [_] `symbolo)
+    (-rator [_] `numbero)
     (-rands [_] [x])
     IReifiableConstraint
     (-reifyc [c v r s]
-      `(numbero ~(-reify s x r)))
+      (when-not (lvar? (walk r x))
+        `(numbero ~(-reify s x r))))
     IConstraintWatchedStores
     (-watched-stores [this] #{:clojure.core.logic/subst})))
- 
+
 (defn numbero [x]
-(cgoal (numbero* x)))
+  (cgoal (numbero* x)))

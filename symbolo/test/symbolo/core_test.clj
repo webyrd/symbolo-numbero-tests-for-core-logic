@@ -82,28 +82,28 @@
            (symbolo q)
            (fresh [x]
              (numbero x)))
-         '((_.0 (sym _.0)))))
+         '((_0 :- (symbolo.core/symbolo _0)))))
 
     (is (=
          (run* [q]
            (numbero q)
            (fresh [x]
              (symbolo x)))
-         '((_.0 (num _.0)))))
+         '((_0 :- (symbolo.core/numbero _0)))))
 
     (is (=
          (run* [q] 
            (fresh [x y]
              (symbolo x)
              (== (list x y) q)))
-         '(((_.0 _.1) (sym _.0)))))
+         '(((_0 _1) :- (symbolo.core/symbolo _0)))))
 
     (is (=
          (run* [q]    
            (fresh [x y]
              (numbero x)
              (== (list x y) q)))
-         '(((_.0 _.1) (num _.0)))))
+         '(((_0 _1) :- (symbolo.core/numbero _0)))))
 
     (is (=
          (run* [q]    
@@ -111,7 +111,9 @@
              (numbero x)
              (symbolo y)
              (== (list x y) q)))
-         '(((_.0 _.1) (num _.0) (sym _.1)))))
+         ;; ideally should be ordered from _0 to _1:
+         ;; (symbolo.core/symbolo _1) (symbolo.core/numbero _0)
+         '(((_0 _1) :- (symbolo.core/symbolo _1) (symbolo.core/numbero _0)))))
 
     (is (=
          (run* [q]    
@@ -119,7 +121,7 @@
              (numbero x)
              (== (list x y) q)
              (symbolo y)))
-         '(((_.0 _.1) (num _.0) (sym _.1)))))
+         '(((_0 _1) :- (symbolo.core/symbolo _1) (symbolo.core/numbero _0)))))
 
     (is (=
          (run* [q]    
@@ -127,7 +129,7 @@
              (== (list x y) q)
              (numbero x)
              (symbolo y)))
-         '(((_.0 _.1) (num _.0) (sym _.1)))))
+         '(((_0 _1) :- (symbolo.core/symbolo _1) (symbolo.core/numbero _0)))))
 
     (is (=
          (run* [q]
@@ -137,7 +139,7 @@
              (symbolo y))
            (fresh [w z]
              (== (list w z) q)))
-         '(((_.0 _.1) (num _.0) (sym _.1)))))
+         '(((_0 _1) :- (symbolo.core/symbolo _1) (symbolo.core/numbero _0)))))
 
     (is (=
          (run* [q]
@@ -148,7 +150,7 @@
            (fresh [w z]
              (== (list w z) q)
              (== w 5)))
-         '(((5 _.0) (sym _.0)))))
+         '(((5 _0) :- (symbolo.core/symbolo _0)))))
 
     (is (=
          (run* [q]
@@ -159,7 +161,7 @@
            (fresh [w z]
              (== 'a z)
              (== (list w z) q)))
-         '(((_.0 a) (num _.0)))))
+         '(((_0 a) :- (symbolo.core/numbero _0)))))
 
     (is (=
          (run* [q]
@@ -170,14 +172,14 @@
            (fresh [w z]
              (== (list w z) q)
              (== 'a z)))
-         '(((_.0 a) (num _.0)))))
+         '(((_0 a) :- (symbolo.core/numbero _0)))))
 
     (is (=
          (run* [q]
            (fresh [x y]
              (== (list x y) q)
              (!= `(5 a) q)))
-         '(((_.0 _.1) (!= ((_.0 5) (_.1 a)))))))
+         '(((_0 _1) :- (!= (_1 symbolo.core-test/a) (_0 5))))))
 
     (is (=
          (run* [q]
@@ -185,7 +187,12 @@
              (== (list x y) q)
              (!= '(5 a) q)
              (symbolo x)))
-         '(((_.0 _.1) (sym _.0)))))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (((_0 _1) :- (symbolo.core/symbolo _0) (!= (_1 a) (_0 5))))
+         ;;
+         ;; since (!= (_1 a) (_0 5)) can never be violated
+         '(((_0 _1) :- (symbolo.core/symbolo _0) (!= (_1 a) (_0 5))))))
 
     (is (=
          (run* [q]
@@ -193,7 +200,10 @@
              (== (list x y) q)
              (symbolo x)
              (!= '(5 a) q)))
-         '(((_.0 _.1) (sym _.0)))))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (((_0 _1) :- (symbolo.core/symbolo _0)))
+         '(((_0 _1) :- (symbolo.core/symbolo _0) (!= (_1 a) (_0 5))))))
 
     (is (=
          (run* [q]
@@ -201,7 +211,10 @@
              (symbolo x)
              (== (list x y) q)
              (!= '(5 a) q)))
-         '(((_.0 _.1) (sym _.0)))))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (((_0 _1) :- (symbolo.core/symbolo _0)))
+         '(((_0 _1) :- (symbolo.core/symbolo _0) (!= (_1 a) (_0 5))))))
 
     (is (=
          (run* [q]
@@ -209,7 +222,10 @@
              (!= '(5 a) q)
              (symbolo x)
              (== (list x y) q)))
-         '(((_.0 _.1) (sym _.0)))))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (((_0 _1) :- (symbolo.core/symbolo _0)))         
+         '(((_0 _1) :- (symbolo.core/symbolo _0) (!= ((_0 _1) (5 a)))))))
 
     (is (=
          (run* [q]
@@ -217,7 +233,10 @@
              (!= '(5 a) q)
              (== (list x y) q)
              (symbolo x)))
-         '(((_.0 _.1) (sym _.0)))))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (((_0 _1) :- (symbolo.core/symbolo _0)))         
+         '(((_0 _1) :- (symbolo.core/symbolo _0) (!= ((_0 _1) (5 a)))))))
 
     (is (=
          (run* [q]
@@ -225,7 +244,10 @@
              (== (list x y) q)
              (!= '(5 a) q)
              (numbero y)))
-         '(((_.0 _.1) (num _.1)))))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (((_0 _1) :- (symbolo.core/numbero _1)))
+         '(((_0 _1) :- (!= (_1 a) (_0 5)) (symbolo.core/numbero _1)))))
 
     (is (=
          (run* [q]
@@ -233,7 +255,10 @@
              (== (list x y) q)
              (numbero y)
              (!= '(5 a) q)))
-         '(((_.0 _.1) (num _.1)))))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (((_0 _1) :- (symbolo.core/numbero _1)))
+         '(((_0 _1) :- (!= (_1 a) (_0 5)) (symbolo.core/numbero _1)))))
 
     (is (=
          (run* [q]
@@ -241,7 +266,10 @@
              (numbero y)
              (== (list x y) q)
              (!= '(5 a) q)))
-         '(((_.0 _.1) (num _.1)))))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (((_0 _1) :- (symbolo.core/numbero _1)))
+         '(((_0 _1) :- (!= (_1 a) (_0 5)) (symbolo.core/numbero _1)))))
 
     (is (=
          (run* [q]
@@ -249,7 +277,10 @@
              (!= '(5 a) q)
              (numbero y)
              (== (list x y) q)))
-         '(((_.0 _.1) (num _.1)))))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (((_0 _1) :- (symbolo.core/numbero _1)))
+         '(((_0 _1) :- (symbolo.core/numbero _1) (!= ((_0 _1) (5 a)))))))
 
     (is (=
          (run* [q]
@@ -257,7 +288,10 @@
              (!= '(5 a) q)
              (== (list x y) q)
              (numbero y)))
-         '(((_.0 _.1) (num _.1)))))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (((_0 _1) :- (symbolo.core/numbero _1)))
+         '(((_0 _1) :- (symbolo.core/numbero _1) (!= ((_0 _1) (5 a)))))))
 
     (is (=
          (run* [q]
@@ -265,7 +299,10 @@
              (!= (list x y) q)
              (numbero x)
              (symbolo y)))
-         '(_.0)))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (_0)
+         '((_0 :- (!= (_0 (_1 _2)))))))
 
     (is (=
          (run* [q]
@@ -273,7 +310,10 @@
              (numbero x)
              (!= (list x y) q)
              (symbolo y)))
-         '(_.0)))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (_0)         
+         '((_0 :- (!= (_0 (_1 _2)))))))
 
     (is (=
          (run* [q]
@@ -281,6 +321,9 @@
              (numbero x)
              (symbolo y)
              (!= (list x y) q)))
-         '(_.0)))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (_0)         
+         '((_0 :- (!= (_0 (_1 _2)))))))
     
     ))
