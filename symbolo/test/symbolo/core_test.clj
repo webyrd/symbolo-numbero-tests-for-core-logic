@@ -4,6 +4,32 @@
   (:use clojure.test
         symbolo.core))
 
+(deftest disequality-tests
+  (testing ""
+
+    (is (=
+         (run* [q]
+           (fresh [x y]
+             (== (list x y) q)
+             (!= '(5 a) q)))
+         ;; Simplified answer should just be:
+         ;;
+         ;; ((_0 _1))
+         ;;
+         ;; since (!= (_1 a) (_0 5)) can never be violated
+         '(((_0 _1) :- (!= (_1 a) (_0 5))))))
+
+    (is (=
+         (run* [q]
+           (fresh [x y]
+             (!= (list x y) q)))
+         ;; Simplified answer should just be:
+         ;;
+         ;; (_0)
+         '((_0 :- (!= (_0 (_1 _2)))))))
+    
+    ))
+
 (deftest symbolo-numbero-tests
   (testing ""
     
