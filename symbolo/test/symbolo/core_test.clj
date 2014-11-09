@@ -420,7 +420,6 @@
              (symbolo x)
              (symbolo y)
              (eval-expo exp [] val)))
-         ;; would be better to sort the symbolo constraints so _0 comes before _1
          '(([[:lambda [_0] [:lambda [_1] _2]] [:closure _0 [:lambda [_1] _2] []]] :- (symbolo.core/symbolo _1) (symbolo.core/symbolo _0)))))
 
     (is (=
@@ -430,7 +429,6 @@
              (symbolo x)
              (symbolo y)
              (eval-expo [[exp 1] 2] [] 4)))
-         ;; would be better to sort the symbolo constraints so _0 comes before _1         
          '(([:lambda [_0] [:lambda [_1] 4]] :- (symbolo.core/symbolo _1) (symbolo.core/symbolo _0)))))
 
     (is (=
